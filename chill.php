@@ -294,7 +294,7 @@ class Chill
 		$context['http']['method']	= 'DELETE';	
 			
 		list($status, $response) = $this->sendRequest($id . '?rev=' . $rev, $context);
-		
+				
 		if($status != 200)
 		{
 			throw new Chill_Response_Exception('DELETE - Unknown response status.');
