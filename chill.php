@@ -103,7 +103,7 @@ class Chill
 		}
 		
 		$url = '_design/'.$design.'/_view/'.$view.'?'.implode('&', $query);
-				
+		
 		if(is_array($key))
 		{
 			$rtn = $this->getViewByPost($url, $key);
@@ -117,7 +117,7 @@ class Chill
 				
 				$url .= '&key='.$key;
 			}
-						
+									
 			$rtn = $this->getViewByGet($url);
 		}
 		
