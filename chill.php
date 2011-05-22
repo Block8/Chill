@@ -353,9 +353,9 @@ class Chill
 	*
 	* @param array $doc	Document to convert.
 	*/
-	protected function toDocument(array $doc = array())
+	protected function toDocument($doc = array())
 	{
-		if(isset($doc['_id']))
+		if($doc && isset($doc['_id']))
 		{
 			// Single document:
 			return new ChillDoc($this, $doc);
