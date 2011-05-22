@@ -163,10 +163,10 @@ class Chill
 		
 		$context['http']['method']	= 'POST';
 		$context['http']['header']	= 'Content-Type: application/json';
-		$context['http']['content']	= json_encode($keys);
+		$context['http']['content']	= json_encode(array('keys' => $keys));
 		
 		list($status, $response) = $this->sendRequest($url, $context);
-		
+				
 		if($status != 200)
 		{
 			throw new Chill_Response_Exception('POST View - Unknown response status.');
