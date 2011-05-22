@@ -270,22 +270,30 @@ class Chill
 		{
 			throw new Chill_Response_Exception('POST - Unknown response status.');
 		}
-		
-		return array('_id' => $response['id'], '_rev' => $response['rev']);
+				
+		if(isset($response['id']))
+		{
+			return array('_id' => $response['id'], '_rev' => $response['rev']);
+		}
+		else
+		{
+			return $response;
+		}
 	}
 	
 	/**
 	* Delete document by ID.
 	* 
 	* @param string	$id		Document ID.
+	* @param string	$rev	Document revision ID.
 	* @link http://wiki.apache.org/couchdb/HTTP_Document_API#DELETE
 	*/
-	public function delete($id)
+	public function delete($id, $rev)
 	{
 		$context = array('http' => array());
 		$context['http']['method']	= 'DELETE';	
 			
-		list($status, $response) = $this->sendRequest($id, $context);
+		list($status, $response) = $this->sendRequest($id . '?rev=' . $rev, $context);
 		
 		if($status != 200)
 		{
