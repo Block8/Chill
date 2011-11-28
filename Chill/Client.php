@@ -10,7 +10,7 @@
 * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer 
 * in the documentation and/or other materials provided with the distribution.
-* Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to endorse or promote products derived from this software 
+* Neither the name of the Chill nor the names of its contributors may be used to endorse or promote products derived from this software 
 * without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
@@ -21,23 +21,25 @@
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
 * @author	Dan Cryer <dan@dancryer.com>
-* @link		http://www.dancryer.com/
+* @link		https://github.com/dancryer/Chill
 * @package	Chill
 */
+
+namespace Chill;
 
 /**
 * Chill - CouchDb Client Library
 * 
 * Usage - Get one document as array:
 * <code>
-* $chill	= new Chill('localhost', 'my_database');
+* $chill	= new Chill\Client('localhost', 'my_database');
 * $doc		= $chill->get('8128173972d50affdb6724ecbd00d9fc');
 * print $doc['_id'];
 * </code>
 * 
-* Usage - Get view results as ChillDoc objects:
+* Usage - Get view results as Chill Document objects:
 * <code>
-* $chill	= new Chill('localhost', 'my_database');
+* $chill	= new Chill\Client('localhost', 'my_database');
 * $docs		= $chill->asDocuments()->getView('mydesign', 'myview', array('key1', 'key2'));
 * foreach($docs as $doc)
 * {
@@ -47,26 +49,26 @@
 *
 * @package	Chill
 */
-class Chill
+class Client
 {
 	/**
 	* @var string	Database URL
-	* @see Chill::__construct()
+	* @see Chill\Client::__construct()
 	*/
 	protected $url		= null;
 	
 	/**
 	* @var array	Object cache
-	* @see Chill::getCache()
-	* @see Chill::setCache()
+	* @see Chill\Client::getCache()
+	* @see Chill\Client::setCache()
 	*/
 	protected $cache	= array();
 	
 	/**
-	* @var bool		Get documents as arrays (false) or ChillDoc objects (true)
-	* @see Chill::asDocuments()
-	* @see Chill::toDocument()
-	* @see Chill::toDocuments()
+	* @var bool		Get documents as arrays (false) or Chill Document objects (true)
+	* @see Chill\Client::asDocuments()
+	* @see Chill\Client::toDocument()
+	* @see Chill\Client::toDocuments()
 	*/
 	protected $asDocs	= false;
 	
@@ -84,7 +86,7 @@ class Chill
 	}
 	
 	/**
-	* Get the results of a CouchDb view as an array of arrays, or ChillDoc objects.
+	* Get the results of a CouchDb view as an array of arrays, or Chill Document objects.
 	* 
 	* @param string	$design	Design name.
 	* @param string	$view	View name.
@@ -155,7 +157,7 @@ class Chill
 	*
 	* @param string	$url	Full URL of the view, including parameters.
 	* @param array	$keys	Array of acceptable keys.
-	* @see Chill::getView()
+	* @see Chill\Client::getView()
 	*/
 	protected function getViewByPost($url, array $keys)
 	{
@@ -169,7 +171,7 @@ class Chill
 				
 		if($status != 200)
 		{
-			throw new Chill_Response_Exception('POST View - Unknown response status.');
+			throw new \Chill\Exception\Response('POST View - Unknown response status.');
 		}
 		
 		return $this->asDocs ? $this->toDocuments($response) : $response;
@@ -178,7 +180,7 @@ class Chill
 	/**
 	* Get all documents in the database.
 	* 
-	* @see Chill::getViewByGet()
+	* @see Chill\Client::getViewByGet()
 	*/
 	public function getAllDocuments()
 	{
@@ -233,11 +235,11 @@ class Chill
 		
 		if($status == 409)
 		{
-			throw new Chill_Conflict_Exception('PUT /' . $id . ' failed.');
+			throw new \Chill\Exception\Conflict('PUT /' . $id . ' failed.');
 		}
 		elseif($status != 201)
 		{
-			throw new Chill_Response_Exception('PUT /' . $id . ' - Unknown response status.');
+			throw new \Chill\Exception\Response('PUT /' . $id . ' - Unknown response status.');
 		}
 				
 		if(isset($response['id']))
@@ -268,7 +270,7 @@ class Chill
 		
 		if($status != 201)
 		{
-			throw new Chill_Response_Exception('POST - Unknown response status.');
+			throw new \Chill\Exception\Response('POST - Unknown response status.');
 		}
 				
 		if(isset($response['id']))
@@ -297,7 +299,7 @@ class Chill
 				
 		if($status != 200)
 		{
-			throw new Chill_Response_Exception('DELETE - Unknown response status.');
+			throw new \Chill\Exception\Response('DELETE - Unknown response status.');
 		}
 		
 		if($this->getCache($id))
@@ -337,10 +339,10 @@ class Chill
 	}
 	
 	/**
-	* Define whether or not to convert documents to ChillDocs on return.
+	* Define whether or not to convert documents to Chill Documents on return.
 	* 
 	* @param bool	$docs	Convert, or not?
-	* @return ChillDoc	This class. (Chainable)
+	* @return Chill\Document	This class. (Chainable)
 	*/
 	public function asDocuments($docs = true)
 	{
@@ -349,7 +351,7 @@ class Chill
 	}
 	
 	/**
-	* Convert one CouchDb document result to a ChillDoc object.
+	* Convert one CouchDb document result to a Chill Document object.
 	*
 	* @param array $doc	Document to convert.
 	*/
@@ -358,7 +360,7 @@ class Chill
 		if($doc && isset($doc['_id']))
 		{
 			// Single document:
-			return new ChillDoc($this, $doc);
+			return new \Chill\Document($this, $doc);
 		}
 		else
 		{
@@ -367,7 +369,7 @@ class Chill
 	}
 	
 	/**
-	* Convert many CouchDb documents to ChillDoc objects.
+	* Convert many CouchDb documents to Chill Document objects.
 	* 
 	* @param array $docs	Documents to convert.
 	*/
@@ -391,7 +393,7 @@ class Chill
 	}
 	
 	/**
-	* Send request to ChillDoc server. Currently uses file_get_contents() to make requests.
+	* Send request to CouchDb server. Currently uses file_get_contents() to make requests.
 	*
 	* @param string	$uri		Request URI, e.g. _design/mydesign/_view/myview?key="test"
 	* @param array	@context	Array of stream_context_create options.
@@ -407,159 +409,11 @@ class Chill
 		
 		if($response === false)
 		{
-			throw new Chill_Connection_Exception('Could not connect to CouchDb server.');
+			throw new \Chill\Exception\Connection('Could not connect to CouchDb server.');
 		}
 		
 		$statusParts	= explode(' ', $http_response_header[0]);
 		
 		return array((int)$statusParts[1], json_decode($response, true));
 	}
-}
-
-/**
-* ChillDoc object - Representation of a CouchDb document.
-* 
-* Usage:
-* <code>
-* $chill		= new Chill('localhost', 'my_database');
-* $doc			= $chill->get('8128173972d50affdb6724ecbd00d9fc');
-* $doc->title	= 'Changing my doc.';
-* $doc->save();
-* </code>
-*
-* @package	Chill
-*/
-class ChillDoc
-{
-	/**
-	* @var array Document data from CouchDb.
-	*/
-	protected $data		= array();
-	
-	/**
-	* @var Chill Chill class, for interacting with CouchDb.
-	*/
-	protected $chill	= null;
-	
-	/**
-	* Constructor - Create a new document, or load an existing one from data.
-	*
-	* @param Chill $chill Chill class.
-	* @param array $doc (Optional) Document data.
-	*/
-	public function __construct(Chill $chill, array $doc = array())
-	{		
-		$this->chill	= $chill;
-		$this->data		= $doc;
-	}
-	
-	/**
-	* Checks whether a key is set on this document.
-	*
-	* @param string $key The key.
-	* @return bool
-	*/
-	public function __isset($key)
-	{
-		return isset($this->data[$key]);
-	}
-	
-	/**
-	* Get the value of a key in this document.
-	* 
-	* @param string $key The key.
-	* @return mixed
-	*/
-	public function __get($key)
-	{
-		if(isset($this->data[$key]))
-		{
-			return $this->data[$key];
-		}
-		else
-		{
-			return null;
-		}
-	}
-	
-	/**
-	* Set the value of a key in this document.
-	* 
-	* @param string $key The key.
-	* @param string $value The value.
-	*/
-	public function __set($key, $value)
-	{
-		$this->data[$key] = $value;
-	}
-	
-	/**
-	* Save this document, either by updating the document that already exists, or creating. Based on presence of _id.
-	* 
-	* @return bool
-	*/
-	public function save()
-	{
-		try
-		{			
-			if($this->data['_id'])
-			{
-				$this->data = array_merge($this->data, $this->chill->put($this->_id, $this->data));
-			}
-			else
-			{
-				$this->data = array_merge($this->data, $this->chill->post($this->data));
-			}
-			
-			return true;
-		}
-		catch(Chill_Exception $ex)
-		{
-			return false;
-		}
-	}
-	
-	/**
-	* Get the internal data array for this object.
-	* 
-	* @return array
-	*/
-	public function getArray()
-	{
-		return $this->data;
-	}
-}
-
-/**
-* Basic Chill exception class.
-*/
-class Chill_Exception extends Exception {}
-
-/**
-* Chill exception thrown when Chill cannot connect to CouchDb.
-*/
-class Chill_Connection_Exception extends Chill_Exception {}
-
-/**
-* Chill exception thrown on save when a conflict arises.
-*/
-class Chill_Conflict_Exception extends Chill_Exception {}
-
-/**
-* Chill exception thrown when a non-expected and/or failure response is received.
-*/
-class Chill_Response_Exception extends Chill_Exception {}
-
-// Some people might not want to use Chill / ChillDoc as their class names, so where possible, alias as CouchDb and CouchDb_Document
-if(!class_exists('CouchDb') && !class_exists('CouchDb_Document'))
-{
-	/**
-	* CouchDb name alias for people who don't want to use Chill
-	*/
-	class CouchDb extends Chill {}
-	
-	/**
-	* CouchDb_Document name alias for people who don't want to use ChillDoc
-	*/
-	class CouchDb_Document extends ChillDoc {}
 }
