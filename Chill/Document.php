@@ -113,7 +113,7 @@ class Document
 	{
 		try
 		{			
-			if($this->data['_id'])
+			if(isset($this->data['_id']))
 			{
 				$this->data = array_merge($this->data, $this->chill->put($this->_id, $this->data));
 			}
