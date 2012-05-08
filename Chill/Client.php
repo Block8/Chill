@@ -133,9 +133,9 @@ class Client
 	*/
 	protected function getViewByGet($url)
 	{
-		$rtn = $this->getCache($url);
+		$response = $this->getCache($url);
 		
-		if(!$rtn)
+		if(!$response)
 		{
 			list($status, $response) = $this->sendRequest($url);
 									
