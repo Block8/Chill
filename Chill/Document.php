@@ -58,7 +58,7 @@ class Document
 	* @param Chill $chill Chill class.
 	* @param array $doc (Optional) Document data.
 	*/
-	public function __construct(Chill $chill, array $doc = array())
+	public function __construct(Client $chill, array $doc = array())
 	{		
 		$this->chill	= $chill;
 		$this->data		= $doc;
