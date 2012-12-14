@@ -32,6 +32,6 @@ namespace Chill;
 * 
 * @package	Chill
 */
-class Exception
+class Exception extends \Exception
 {
 }
