@@ -102,7 +102,7 @@ class Client
 			$v = is_string($v) ? '"'.$v.'"' : $v;
 			$v = is_bool($v) ? $v ? 'true' : 'false' : $v;
 			$v = is_array($v) ? json_encode($v) : $v;
-			$query[] = $k . '=' . $v;
+			$query[] = $k . '=' . urlencode($v);
 		}
 		
 		$url = '_design/'.$design.'/_view/'.$view.'?'.implode('&', $query);
