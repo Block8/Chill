@@ -1,15 +1,16 @@
 {
     "name": "chill/chill",
     "type": "library",
-    "description": "CouchDb client library for PHP 5.3",
+    "description": "CouchDb client library for PHP 5.3+",
     "keywords": ["couchdb", "couch", "database", "client", "library"],
     "homepage": "https://github.com/dancryer/Chill",
-    "license": "BSD",
+    "license": "BSD-2-Clause",
     "authors": [
         {
             "name": "Dan Cryer",
             "email": "dan@dancryer.com",
-            "homepage": "http://www.dancryer.com"
+            "homepage": "http://www.dancryer.com",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -17,5 +18,8 @@
     },
     "autoload": {
         "psr-0": { "Chill": "" }
+    },
+    "support": {
+        "issues": "https://github.com/dancryer/Chill/issues"
     }
 }
