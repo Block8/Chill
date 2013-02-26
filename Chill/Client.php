@@ -231,7 +231,7 @@ class Client
 		$context['http']['header']	= 'Content-Type: application/json';
 		$context['http']['content']	= json_encode($doc);
 		
-		list($status, $response) = $this->sendRequest($id . '?rev=' . $doc['_rev'], $context);
+		list($status, $response) = $this->sendRequest($id . (isset($doc['_rev']) ? '?rev=' . $doc['_rev'] : ''), $context);
 		
 		if($status == 409)
 		{
