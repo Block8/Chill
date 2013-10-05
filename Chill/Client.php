@@ -207,7 +207,7 @@ class Client
 		
 		if(!$cache || !$rtn)
 		{
-			list($status, $doc) = $this->sendRequest($id);
+			list($status, $doc) = $this->sendRequest(urlencode($id));
 						
 			if($status == 200)
 			{
@@ -237,7 +237,7 @@ class Client
 		$context['http']['header']	= 'Content-Type: application/json';
 		$context['http']['content']	= json_encode($doc);
 		
-		list($status, $response) = $this->sendRequest($id . (isset($doc['_rev']) ? '?rev=' . $doc['_rev'] : ''), $context);
+		list($status, $response) = $this->sendRequest(urlencode($id) . (isset($doc['_rev']) ? '?rev=' . $doc['_rev'] : ''), $context);
 		
 		if($status == 409)
 		{
