@@ -89,7 +89,23 @@ class Client
 	{
 		$this->url = $scheme . '://' . $host . ':' . $port . '/' . $db . '/';
 	}
-	
+
+	/**
+	 * Enables or disables the cache;
+	 *
+	 * @param $bool True to enable cache, false to disable it. Caching is enabled by default.
+	 * @return bool The setting for the cache after calling
+	 */
+	public function setCacheEnabled($bool)
+	{
+		if ($bool && !is_array($this->cache)) {
+			$this->cache = array();
+		} else {
+			$this->cache = null;
+		}
+		return isset($this->cache);
+	}
+
 	/**
 	* Get the results of a CouchDb view as an array of arrays, or Chill Document objects.
 	* 
@@ -139,9 +155,7 @@ class Client
 	*/
 	protected function getViewByGet($url)
 	{
-		$response = $this->getCache($url);
-		
-		if(!$response)
+		if(! isset($this->cache) || ! $response = $this->getCache($url))
 		{
 			list($status, $response) = $this->sendRequest($url);
 									
@@ -203,9 +217,7 @@ class Client
 	*/
 	public function get($id, $cache = true)
 	{
-		$rtn = $this->getCache($id);
-		
-		if(!$cache || !$rtn)
+		if(! isset($this->cache) || ! $rtn = $this->getCache($id))
 		{
 			list($status, $doc) = $this->sendRequest(urlencode($id));
 						
@@ -317,7 +329,7 @@ class Client
 	}
 	
 	/**
-	* Get a document from this class' internal cache.
+	* Get a document from this class' internal cache. Behaviour is unchanged if the cache is not in use.
 	* 
 	* @param string	$id	ID to get from cache.
 	*/
@@ -339,9 +351,15 @@ class Client
 	*/
 	protected function setCache($id, $value)
 	{
-		$this->cache[$id] = $value;
-		
-		return $this->cache[$id];
+		if (isset($this->cache))
+		{
+			$this->cache[$id] = $value;
+			return $this->cache[$id];
+		}
+		else
+		{
+			return $value;
+		}
 	}
 	
 	/**
