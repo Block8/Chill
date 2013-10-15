@@ -215,11 +215,12 @@ class Client
 	* @param bool	$cache	Whether or not to use the cache.
 	* @link http://wiki.apache.org/couchdb/HTTP_Document_API#GET
 	*/
-	public function get($id, $cache = true)
+	public function get($id, $cache = true, $encodeId = true)
 	{
 		if(! isset($this->cache) || ! $rtn = $this->getCache($id))
 		{
-			list($status, $doc) = $this->sendRequest(urlencode($id));
+			$docId = ($encodeId ? urlencode($id) : $id);
+			list($status, $doc) = $this->sendRequest($docId);
 						
 			if($status == 200)
 			{
@@ -241,15 +242,16 @@ class Client
 	* @param array	$doc	Document to store.
 	* @link http://wiki.apache.org/couchdb/HTTP_Document_API#PUT
 	*/
-	public function put($id, array $doc)
+	public function put($id, array $doc, $encodeId = true)
 	{
 		$context = array('http' => array());
 		
 		$context['http']['method']	= 'PUT';
 		$context['http']['header']	= 'Content-Type: application/json';
 		$context['http']['content']	= json_encode($doc);
-		
-		list($status, $response) = $this->sendRequest(urlencode($id) . (isset($doc['_rev']) ? '?rev=' . $doc['_rev'] : ''), $context);
+
+		$docId = ($encodeId ? urlencode($id) : $id);
+		list($status, $response) = $this->sendRequest($docId . (isset($doc['_rev']) ? '?rev=' . $doc['_rev'] : ''), $context);
 		
 		if($status == 409)
 		{
