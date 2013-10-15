@@ -191,7 +191,7 @@ class Client
 				
 		if($status != 200)
 		{
-			throw new \Chill\Exception\Response('POST View - Unknown response status.');
+			throw new \Chill\Exception\Response(sprintf('POST View - Unrecognised response status: %s',$status));
 		}
 		
 		return $this->asDocs ? $this->toDocuments($response) : $response;
@@ -255,11 +255,11 @@ class Client
 		
 		if($status == 409)
 		{
-			throw new \Chill\Exception\Conflict('PUT /' . $id . ' failed.');
+			throw new \Chill\Exception\Conflict(sprintf('PUT /%s failed: %s',$docId,isset($response['reason']) ? $response['reason'] : 'n/a'));
 		}
 		elseif($status != 201)
 		{
-			throw new \Chill\Exception\Response('PUT /' . $id . ' - Unknown response status.');
+			throw new \Chill\Exception\Response(sprintf('PUT /%s - Unrecognised response status: %s',$docId,$status));
 		}
 				
 		if(isset($response['id']))
@@ -290,7 +290,7 @@ class Client
 		
 		if($status != 201)
 		{
-			throw new \Chill\Exception\Response('POST - Unknown response status.');
+			throw new \Chill\Exception\Response(sprintf('POST - Unrecognised response status: %s',$status));
 		}
 				
 		if(isset($response['id']))
@@ -319,7 +319,7 @@ class Client
 				
 		if($status != 200)
 		{
-			throw new \Chill\Exception\Response('DELETE - Unknown response status.');
+			throw new \Chill\Exception\Response(sprintf('DELETE /%s - Unrecognised response status: %s',$id,$status));
 		}
 		
 		if($this->getCache($id))
