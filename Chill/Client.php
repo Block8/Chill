@@ -221,6 +221,25 @@ class Client
 		
 		return $this->asDocs ? $this->toDocument($rtn) : $rtn;
 	}
+        
+        /**
+         * Fetch and return attachment
+         * @param type $id
+         * @param type $file
+         * @return type
+         */
+        public function getAttachment($id, $file)
+        {
+            list($status, $attachmentData) = $this->sendRequest(urlencode($id)."/".$file);
+            if($status == 200)
+            {
+                return $attachmentData;
+            }
+            else 
+            {
+                return null;
+            }
+        }
 	
 	/**
 	* Update or create a document by ID. CouchDb recommends using PUT rather than POST where possible to avoid proxy issues.
@@ -419,7 +438,13 @@ class Client
 		}
 		
 		$statusParts	= explode(' ', $http_response_header[0]);
-		
-		return array((int)$statusParts[1], json_decode($response, true));
+                $status         = (int)$statusParts[1];
+                $result         = json_decode($response, true);        
+
+                //handle attachments
+                if($status == 200 && !empty($response)&& !$result){       
+                    $result     = $response;
+                }
+                return array($status, $result);
 	}
 }
