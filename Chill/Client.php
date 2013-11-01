@@ -32,6 +32,8 @@
 
 namespace Chill;
 
+use Psr\Log\LoggerInterface;
+
 /**
 * Chill - CouchDb Client Library
 * 
@@ -76,7 +78,20 @@ class Client
 	* @see Chill\Client::toDocuments()
 	*/
 	protected $asDocs	= false;
-	
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger   = null;
+
+    /**
+     * Enables/disables following of redirect in the requests; Cloudant issues a redirect after a document has been
+     * updated with a PUT, and following it then returns an error response so undesirable
+     *
+     * @var bool
+     */
+    protected $followRedirects = true;
+
 	/**
 	* Constructor - Create a new Chill object. 
 	*
@@ -89,6 +104,19 @@ class Client
 	{
 		$this->url = $scheme . '://' . $host . ':' . $port . '/' . $db . '/';
 	}
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function setFollowRedirects($bool)
+    {
+        $this->followRedirects = $bool;
+    }
 
 	/**
 	 * Enables or disables the cache;
@@ -252,8 +280,8 @@ class Client
 
 		$docId = ($encodeId ? urlencode($id) : $id);
 		list($status, $response) = $this->sendRequest($docId . (isset($doc['_rev']) ? '?rev=' . $doc['_rev'] : ''), $context);
-		
-		if($status == 409)
+
+        if($status == 409)
 		{
 			throw new \Chill\Exception\Conflict(sprintf('PUT /%s failed: %s',$docId,isset($response['reason']) ? $response['reason'] : 'n/a'));
 		}
@@ -429,15 +457,18 @@ class Client
 		$context['http']['timeout']			= 5;
 		$context['http']['ignore_errors']	= true;
 		$context['http']['user_agent']		= 'Simple Couch/1.0';
-				
-		$context		= stream_context_create($context); 
+        if (! $this->followRedirects) {
+            $context['http']['follow_location']	= false;
+        }
+
+		$context		= stream_context_create($context);
 		$response		= @file_get_contents($this->url . $uri, false, $context);
 		
 		if($response === false)
 		{
 			throw new \Chill\Exception\Connection('Could not connect to CouchDb server.');
 		}
-		
+
 		$statusParts	= explode(' ', $http_response_header[0]);
 		
 		return array((int)$statusParts[1], json_decode($response, true));
