@@ -12,25 +12,31 @@ Example usage
 
 **Retrieve a single document by ID:**
 
-    $chill = new Chill\Client('localhost', 'my_database');
-    $doc = $chill->get('8128173972d50affdb6724ecbd00d9fc');
-    print $doc['_id'];
-
+```php
+$chill = new Chill\Client('localhost', 'my_database');
+$doc = $chill->get('8128173972d50affdb6724ecbd00d9fc');
+print $doc['_id'];
+```
 
 **Retrieve the results of a view as Chill Document objects:**
 
-    $chill = new Chill\Client('localhost', 'my_database');
-    $docs = $chill->asDocuments()->getView('mydesign', 'myview', array('key1', 'key2'));
-    foreach ($docs as $doc) {
-        print $doc->_id . PHP_EOL;
-    } 
+```php
+$chill = new Chill\Client('localhost', 'my_database');
+$docs = $chill->asDocuments()->getView('mydesign', 'myview', array('key1', 'key2'));
+
+foreach ($docs as $doc) {
+    print $doc->_id . PHP_EOL;
+} 
+```
 
 **Retrieve and update a document**
 
-    $chill = new Chill\Client('localhost', 'my_database');
-    $doc = $chill->get('8128173972d50affdb6724ecbd00d9fc');
-    $doc->title = 'Changing my doc.';
-    $doc->save();
+```php
+$chill = new Chill\Client('localhost', 'my_database');
+$doc = $chill->get('8128173972d50affdb6724ecbd00d9fc');
+$doc->title = 'Changing my doc.';
+$doc->save();
+```
 
 With thanks to
 -------------- 
