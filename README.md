@@ -3,6 +3,10 @@ Chill - PHP Library for CouchDb
 
 Chill is a simple and efficient CouchDb client library for PHP. Released under the BSD 2 Clause Licence and made available via [Composer/Packagist](https://packagist.org/packages/chill/chill).
 
+**Current Build Status:**
+
+[![Build Status](http://phpci.block8.net/build-status/image/4?branch=master)](http://phpci.block8.net/build-status/view/4?branch=master)
+
 Example usage
 -------------
 
